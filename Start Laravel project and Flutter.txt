@@ -1,0 +1,36 @@
+A. create new project Laravel (BE)
+- Composer create-project laravel/laravel "project Name"
+- php artisan migrate
+- Get into Project Dir and change .env Database to start migration
+- 
+Clone Project (Stisla)
+- git Clone "Stisla Repository" Official/Bahrie127 
+- Setting LaravelKey => php artisan key:generate
+- php artisan optimize
+
+Start Server
+- Php artisan serve --port "input Desire Port"
+- php artisan make:seeder PolyclinicSeeder
+- php artisan migrate:rollback --step=3
+- php artisan migrate:refresh
+- php artisan make:migration drop_specific_table_or_column
+- $table->string('polyID')->index()
+- php artisan make:model Doctor
+- php artisan db:seed --class=dataDoctor --force --env=local
+Seed User
+- php artisan make:seeder ExampleTableSeeder
+- php artisan migrate:fresh --seed
+- php artisan db:seed --class=
+
+
+Create Controller
+- php artisan make:controller UserController
+php artisan migrate:rollback --path=database/migrations/2022_01_01_000000_create_example_table.php
+php artisan migrate --path=/database/migrations/my_migration_file.php
+B. Create Frontend (phone) - Flutter
+Create Project
+- flutter doctor -v
+- Flutter create "Project Name"
+- to run flutter run -v
+
+
