@@ -18,7 +18,7 @@ class Polyclinic extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name', 'description', 'degree_requirement', 'degree_mapping'
+        'name', 'description', 'degree_requirement', 'degree_mapping', 'specialization'
         // Add more fields here if needed
     ];
 }

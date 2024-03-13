@@ -14,7 +14,7 @@
                 <div class="search-header">
                     Histories
                 </div>
-                <div class="search-item">
+                {{-- <div class="search-item">
                     <a href="#">How to hack NASA using CSS</a>
                     <a href="#" class="search-close"><i class="fas fa-times"></i></a>
                 </div>
@@ -60,7 +60,7 @@
                         </div>
                         Stisla Admin Template
                     </a>
-                </div>
+                </div> --}}
                 <div class="search-item">
                     <a href="#">
                         <div class="search-icon bg-primary mr-3 text-white">

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DoctorController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 /*
@@ -35,5 +36,17 @@ Route::middleware(['auth'])->group(function () {
         'edit' => 'users.edit',
         'update' => 'users.update',
         'destroy' => 'users.destroy',
+    ]);
+    Route::resource('doctors', DoctorController::class)->parameters([
+        'doctors' => 'doctor_id',
+    ])->names([
+        'index' => 'doctors.index',
+        'create' => 'doctors.create',
+        'store' => 'doctors.store',
+        'show' => 'doctors.show',
+        'edit' => 'doctors.edit',
+        'update' => 'doctors.update',
+        'destroy' => 'doctors.destroy',
+        'indexPolyclinic' => 'doctors.indexPolyclinic',
     ]);
 });
