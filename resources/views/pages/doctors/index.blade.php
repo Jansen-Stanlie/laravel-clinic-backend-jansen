@@ -57,6 +57,8 @@
                                 <div class="table-responsive">
                                     <table class="table-striped table">
                                         <tr>
+                                            <th>NIK</th>
+                                            <th>SIP</th>
                                             <th>Image</th>
                                             <th>Name</th>
                                             <th>Email</th>
@@ -70,10 +72,21 @@
                                         </tr>
                                         @foreach ($doctors as $doctor)
                                             <tr>
+                                                <td title="{{ $doctor->nik }}">
+                                                    {{ Illuminate\Support\Str::limit($doctor->nik, 10) }}</td>
+                                                <td title="{{ $doctor->sip }}">
+                                                    {{ Illuminate\Support\Str::limit($doctor->sip, 10) }}</td>
                                                 <td>
-                                                    <img alt="image" src="{{ $doctor->photo }}" class="rounded-square"
-                                                        width="35" height="35" data-toggle="title"
-                                                        title="{{ $doctor->name }}">
+                                                    @if ($doctor->photo && preg_match('/\bhttps?:\/\/\S+\b/', $doctor->photo))
+                                                        <img alt="image" src="{{ $doctor->photo }}"
+                                                            class="rounded-square" width="35" height="35"
+                                                            data-toggle="title" title="{{ $doctor->name }}">
+                                                    @else
+                                                        <img alt="default"
+                                                            src="{{ asset('storage/images/' . $doctor->photo) }}"
+                                                            class="rounded-square" width="35" height="35"
+                                                            data-toggle="title" title="{{ $doctor->name }}">
+                                                    @endif
                                                 </td>
                                                 <td>{{ $doctor->name }}
                                                 </td>
@@ -196,4 +209,33 @@
 
     <!-- Page Specific JS File -->
     <script src="{{ asset('js/page/features-posts.js') }}"></script>
+
+
+    <!-- Include NiceScroll plugin -->
+
+    <script>
+        $(document).ready(function() {
+            // Add click event listener to table cells
+            $('td').click(function() {
+                // Get cell content
+
+                var content = $(this).attr('title');
+
+                // Create a temporary input element
+                var tempInput = $('<input>');
+                $('body').append(tempInput);
+                tempInput.val(content).select();
+
+                // Copy the content to the clipboard
+                document.execCommand('copy');
+
+                // Remove the temporary input element
+                tempInput.remove();
+
+                // Show a message indicating that the content has been copied
+                // alert('Copied: ' + content);
+            });
+        });
+    </script>
+    </script>
 @endpush

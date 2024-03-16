@@ -11,6 +11,8 @@ class Doctor extends Model
 
     protected $fillable = [
         'doctor_id',
+        'sip',
+        'nik',
         'name',
         'email',
         'phone',
@@ -28,6 +30,7 @@ class Doctor extends Model
         'status',
         'polyclinic_id',
         'is_active',
+        'polyName',
     ];
 
     protected $hidden = [
