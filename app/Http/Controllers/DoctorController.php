@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Polyclinic;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 
 class DoctorController extends Controller
 {
@@ -147,11 +148,83 @@ class DoctorController extends Controller
         return view('pages.doctors.show', compact('doctor'));
     }
 
+
+
+    public function update(Request $request, $doctor_id)
+    {
+        // Validate the request data
+        $request->validate([
+            'sip' => ['required', Rule::unique('doctors')->ignore($doctor_id, 'doctor_id')],
+            // Add other validation rules for other fields here...
+        ]);
+
+        try {
+            // Find the doctor by ID
+            $doctor = Doctor::where('doctor_id', $doctor_id)->firstOrFail();
+
+            // Check if the email already exists for another user
+            $existingUser = Doctor::where('email', $request->email)
+                ->where('doctor_id', '!=', $doctor_id) // Exclude the current doctor
+                ->exists();
+
+            // If the email already exists for another user, throw an error
+            if ($existingUser) {
+                throw new \Exception('Email address already exists for another user.');
+            }
+
+            // Update the doctor's information
+            $doctor->update([
+                'sip' => $request->sip,
+                'name' => $request->name,
+                'email' => $request->email,
+                'phone' => $request->phone,
+
+                'hospital' => $request->hospital,
+                'address' => $request->address,
+                'city' => $request->city,
+                'province' => $request->province,
+                'zip' => $request->zip,
+                'country' => $request->country,
+
+                // Add other fields to update here...
+            ]);
+
+            // Handle photo update if a new photo is provided
+            if ($request->hasFile('photo')) {
+                // Delete old photo if it exists
+                if ($doctor->photo) {
+                    Storage::delete('public/images/' . $doctor->photo);
+                }
+
+                // Store new photo
+                $photo = $request->file('photo');
+                $filename = $doctor->doctor_id . '.' . $photo->getClientOriginalExtension();
+
+                // Store the file in storage
+                $photo->storeAs('public/images', $filename);
+
+                // Update the doctor's photo attribute with the new filename
+                $doctor->photo = $filename;
+                $doctor->save();
+            }
+
+            // Redirect with success message
+            return redirect()->route('doctors.index')->with('success', 'User updated successfully.');
+        } catch (\Exception $e) {
+            // Log the error and redirect with error message
+            Log::error('Error updating user: ' . $e->getMessage());
+            return redirect()->route('doctors.index')->with('error', 'Failed to update user.' . $e->getMessage());
+        }
+    }
+
+
     //edit
     public function edit($id)
     {
+        $polyclinics = Polyclinic::all();
+        Log::info($polyclinics); // Log the variable
         $doctor = DB::table('doctors')->where('id', $id)->first();
-        return view('pages.doctors.edit', compact('doctor'));
+        return view('pages.doctors.edit', compact('doctor', 'polyclinics'));
     }
     //destroy
     public function destroy($id)
@@ -161,6 +234,12 @@ class DoctorController extends Controller
 
         if (!$doctor) {
             return redirect()->route('doctors.index')->with('error', 'Doctor not found.');
+        }
+
+        // Check if the photo is a URL
+        if (!filter_var($doctor->photo, FILTER_VALIDATE_URL)) {
+            // Delete the photo from storage
+            Storage::delete('public/images/' . $doctor->photo);
         }
 
         // Delete the doctor

@@ -48,20 +48,23 @@
                     </div>
                 </div>
                 <div class="card">
-                    <form id="doctorForm" action="{{ route('doctors.store') }}" method="POST" class="needs-validation"
-                        novalidate="" enctype="multipart/form-data">
+                    <form id="doctorForm" action="{{ route('doctors.update', $doctor->doctor_id) }}" method="POST"
+                        class="needs-validation" novalidate="" enctype="multipart/form-data">
 
                         @csrf
+                        @method('PUT')
                         <div class="card-header">
-                            <h4>Input Data</h4>
+                            <h4>Edit Data</h4>
                         </div>
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>NIK</label>
-                                        <input type="text" class="form-control @error('nik') is-invalid @enderror"
-                                            required="" name="nik" pattern="[0-9]+">
+                                        <input type="readonly" class="form-control @error('nik') is-invalid @enderror"
+                                            required="" name="nik" pattern="[0-9]+" value="{{ $doctor->nik }}"
+                                            readonly>
+
                                         @error('nik')
                                             <div class="invalid-feedback">
                                                 {{ $message }}
@@ -73,11 +76,13 @@
                                     </div>
 
                                 </div>
+                                <input type="hidden" class="form-control" name="doctor_id"
+                                    value="{{ $doctor->doctor_id }}">
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>SIP</label>
                                         <input type="text" class="form-control @error('sip') is-invalid @enderror"
-                                            required name="sip">
+                                            required name="sip" value="{{ $doctor->sip }}">
                                         @error('sip')
                                             <div class="invalid-feedback">
                                                 {{ $message }}
@@ -94,7 +99,7 @@
                                     <div class="form-group">
                                         <label>Name</label>
                                         <input type="text" class="form-control @error('name') is-invalid @enderror"
-                                            required="" name="name">
+                                            required="" name="name" value="{{ $doctor->name }}">
                                         @error('name')
                                             <div class="invalid-feedback">
                                                 {{ $message }}
@@ -106,7 +111,7 @@
                                     <div class="form-group">
                                         <label>Email</label>
                                         <input type="email" class="form-control @error('email') is-invalid @enderror"
-                                            required="" name="email">
+                                            required="" name="email" value="{{ $doctor->email }}">
                                         @error('email')
                                             <div class="invalid-feedback">
                                                 {{ $message }}
@@ -119,7 +124,8 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>Address</label>
-                                        <input type="text" class="form-control" required name='address'>
+                                        <input type="text" class="form-control" required name='address'
+                                            value="{{ $doctor->address }}">
 
                                         <div class="invalid-feedback">
                                             please fill in your address
@@ -129,7 +135,8 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>Hospital</label>
-                                        <input type="text" class="form-control" required name='hospital'>
+                                        <input type="text" class="form-control" required name='hospital'
+                                            value="{{ $doctor->hospital }}">
 
                                         <div class="invalid-feedback">
                                             please fill in your hospital
@@ -141,7 +148,8 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>Province</label>
-                                        <input type="text" class="form-control" required name='province'>
+                                        <input type="text" class="form-control" required name='province'
+                                            value="{{ $doctor->province }}">
 
                                         <div class="invalid-feedback">
                                             please fill in your province
@@ -151,7 +159,8 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>City</label>
-                                        <input type="text" class="form-control" required name='city'>
+                                        <input type="text" class="form-control" required name='city'
+                                            value="{{ $doctor->city }}">
 
                                         <div class="invalid-feedback">
                                             please fill in your city
@@ -164,7 +173,8 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>Country</label>
-                                        <input type="text" class="form-control" required name="country" readonly>
+                                        <input type="text" class="form-control" required name="country" readonly
+                                            value="{{ $doctor->country }}">
                                         <div class="invalid-feedback">Please fill in your country</div>
                                     </div>
                                 </div>
@@ -172,7 +182,7 @@
                                     <div class="form-group">
                                         <label>Zip Code</label>
                                         <input type="text" class="form-control @error('zip') is-invalid @enderror"
-                                            required name='zip'>
+                                            required name='zip' value="{{ $doctor->zip }}">
                                         @error('zip')
                                             <div class="invalid-feedback">
                                                 {{ $message }}
@@ -187,7 +197,8 @@
                                     <div class="form-group">
                                         <label class="form-label">Phone Number</label>
                                         <input type="tel" class="form-control @error('phone') is-invalid @enderror"
-                                            required name='phone' pattern="[0-9]{10,14}">
+                                            required name='phone' value="{{ $doctor->phone }}">
+                                        {{-- pattern="[0-9]{10,14}" --}}
                                         @error('phone')
                                             <div class="invalid-feedback">
                                                 {{ $message }}
@@ -204,7 +215,7 @@
                                                 <i class="fas fa-lock"></i>
                                             </div>
                                         </div>
-                                        <input type="password"
+                                        <input type="password" readonly
                                             class="form-control @error('password')
                                     is-invalid
                                 @enderror"
@@ -220,24 +231,50 @@
                             </div>
                             <div class="row mb-2 mt-2 mt-lg-n2"> <!-- Modified class mt-2 added here -->
                                 <div class="col-12">
+                                    <input type="hidden" name="oldphoto" value="{{ $doctor->photo }}">
                                     <label for="imageInput">Doctor Image</label>
                                     <div class="custom-file">
                                         <input type="file" name="photo" id="imageInput" accept="image/*"
-                                            class="custom-file-input" required>
-                                        <label class="custom-file-label" for="imageInput">Choose file</label>
+                                            class="custom-file-input">
+                                        <label class="custom-file-label" id="selectedImageLabel" for="imageInput">Choose
+                                            file</label>
                                         <div class="invalid-feedback mt-2">
                                             Please select an image.
                                         </div>
                                     </div>
-
-                                    <!-- Display Imported Image -->
-                                    <div id="importedImageContainer" style="display: none;" class="mt-1">
-                                        <div class="image-container position-relative">
-                                            <img class="mb-2" src="" alt="Imported Image" id="importedImage"
-                                                class="img-fluid" style="max-width: 200px;">
-                                            <button id="removeImageButton" class="btn btn-danger delete-image-btn">
-                                                <i class="fas fa-times"></i>
-                                            </button>
+                                    <div class="row mb-2 mt-2">
+                                        <!-- Display Existing Image (Old Photo) -->
+                                        <div class="col-md-6">
+                                            <label for="existingImage">Old Photo</label>
+                                            <div id="existingImageContainer" class="mt-1" name="oldphoto">
+                                                <div class="image-container position-relative">
+                                                    @if ($doctor->photo && preg_match('/\bhttps?:\/\/\S+\b/', $doctor->photo))
+                                                        <img class="mb-2" src="{{ $doctor->photo }}"
+                                                            alt="Existing Image" id="existingImage" class="img-fluid"
+                                                            style="max-width: 200px;">
+                                                    @else
+                                                        <img class="mb-2"
+                                                            src="{{ asset('storage/images/' . $doctor->photo) }}"
+                                                            alt="Existing Image" id="existingImage" class="img-fluid"
+                                                            style="max-width: 200px;">
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- Display Newly Selected Image (New Photo) -->
+                                        <div class="col-md-6">
+                                            <label id="newPhotoLabel" style="display: none;" for="importedImage">New
+                                                Photo</label>
+                                            <div id="importedImageContainer" style="display: none;" class="mt-1">
+                                                <div class="image-container position-relative">
+                                                    <img class="mb-2" src="" alt="Imported Image"
+                                                        id="importedImage" class="img-fluid" style="max-width: 200px;">
+                                                    <button id="removeImageButton"
+                                                        class="btn btn-danger delete-image-btn">
+                                                        <i class="fas fa-times"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="invalid-feedback mt-2">
@@ -246,11 +283,12 @@
                                 </div>
                             </div>
 
+
                             <div class="form-group">
                                 <label class="form-label">Polyclinics</label>
                                 <select id="polyclinic" class="form-control @error('polyclinic') is-invalid @enderror"
-                                    required>
-                                    <option value="">Select Polyclinic</option>
+                                    required disabled>
+                                    <option value="" selected>{{ $doctor->polyName }}</option>
                                     @foreach ($polyclinics as $polyclinic)
                                         <option value="{{ $polyclinic->id }}"
                                             data-poly-name="{{ $polyclinic->polyName }}"
@@ -272,7 +310,7 @@
                                 <div class="invalid-feedback">Please Select your poly</div>
                             </div>
                             <!-- Hidden input fields for polyName and polyId -->
-                            <input type="hidden" name="polyName" id="polyName">
+                            {{-- <input type="hidden" name="polyName" id="polyName"> --}}
                             <input type="hidden" name="polyclinic_id" id="polyclinic_id">
                             <div class="row">
                                 <div class="col-md-6">
@@ -280,7 +318,8 @@
                                         <label class="form-label">Degree Requirement</label>
                                         <input type="text"
                                             class="form-control @error('degree_requirement') is-invalid @enderror"
-                                            id="degree_requirement" name="degree" readonly>
+                                            id="degree_requirement" name="degree" readonly
+                                            value="{{ $doctor->degree }}">
                                         @error('degree_requirement')
                                             <div class="invalid-feedback" style="display: block;">
                                                 {{ $message }}
@@ -295,7 +334,8 @@
                                         <label class="form-label">Specialization</label>
                                         <input type="text"
                                             class="form-control @error('specialization') is-invalid @enderror"
-                                            id="specialization" name="specialization" readonly required>
+                                            id="specialization" name="specialization" readonly required
+                                            value="{{ $doctor->specialization }}">
                                         @error('specialization')
                                             <div class="invalid-feedback" style="display: block;">
                                                 {{ $message }}
@@ -306,13 +346,14 @@
                             </div>
 
                             <div class="row">
-                                <!-- Description Field -->
+                                <!-- polyclinic_id Field -->
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label class="form-label">Description</label>
-                                        <textarea class="form-control @error('description') is-invalid @enderror" id="description" name="description"
-                                            rows="5" readonly required></textarea>
-                                        @error('description')
+                                        <label class="form-label">Polyclinic id</label>
+                                        <input class="form-control @error('polyclinic_id') is-invalid @enderror"
+                                            id="polyclinic_id" name="polyclinic_id" readonly required
+                                            value="{{ $doctor->polyclinic_id }}">
+                                        @error('polyclinic_id')
                                             <div class="invalid-feedback" style="display: block;">
                                                 {{ $message }}
                                             </div>
@@ -323,7 +364,7 @@
 
                         </div>
                         <div class="card-footer text-right">
-                            <button class="btn btn-primary">Submit</button>
+                            <button class="btn btn-primary">Update</button>
                         </div>
                     </form>
                 </div>
@@ -352,7 +393,7 @@
             document.getElementById('polyclinic_id').value = selectedOption.getAttribute('data-poly-id');
         });
     </script>
-    <script>
+    {{-- <script>
         document.addEventListener("DOMContentLoaded", function() {
             fetch('https://ipapi.co/json/')
                 .then(response => response.json())
@@ -371,7 +412,7 @@
                     document.querySelector('input[name="zip"]').value = "No Data";
                 });
         });
-    </script>
+    </script> --}}
     {{-- <script>
         document.addEventListener("DOMContentLoaded", function() {
             if ("geolocation" in navigator) {
@@ -401,7 +442,11 @@
         document.getElementById('imageInput').addEventListener('change', function() {
             var file = this.files[0];
             if (file) {
+                // Display the selected image name
+                document.getElementById('selectedImageLabel').innerText = file.name;
                 displayImage(file);
+                // Display the label for new photo
+                document.getElementById('newPhotoLabel').style.display = 'block';
             }
         });
 
@@ -423,6 +468,10 @@
             document.getElementById('importedImageContainer').style.display = 'none';
             // Reset the file input
             document.getElementById('imageInput').value = '';
+            // Reset the selected image label to "Choose file"
+            document.getElementById('selectedImageLabel').innerText = 'Choose file';
+            // Hide the label for new photo
+            document.getElementById('newPhotoLabel').style.display = 'none';
         });
     </script>
     <script>
