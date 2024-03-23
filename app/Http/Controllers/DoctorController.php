@@ -19,7 +19,7 @@ class DoctorController extends Controller
     {
         $doctors = DB::table('doctors')
             ->when($request->input('name'), function ($query, $doctor_name) {
-                return $query->where('doctor_name', 'like', '%' . $doctor_name . '%');
+                return $query->where('name', 'like', '%' . $doctor_name . '%');
             })
             ->orderBy('id', 'desc')
             ->paginate(10);
@@ -226,33 +226,48 @@ class DoctorController extends Controller
         $doctor = DB::table('doctors')->where('id', $id)->first();
         return view('pages.doctors.edit', compact('doctor', 'polyclinics'));
     }
-    //destroy
     public function destroy($id)
     {
-        // Find the doctor to be deleted
-        $doctor = Doctor::find($id);
+        try {
+            // Start a database transaction
+            DB::beginTransaction();
 
-        if (!$doctor) {
-            return redirect()->route('doctors.index')->with('error', 'Doctor not found.');
+            // Find the doctor to be deleted
+            $doctor = Doctor::find($id);
+
+            if (!$doctor) {
+                return redirect()->route('doctors.index')->with('error', 'Doctor not found.');
+            }
+
+            // Check if the photo is a URL
+            if (!filter_var($doctor->photo, FILTER_VALIDATE_URL)) {
+                // Delete the photo from storage
+                Storage::delete('public/images/' . $doctor->photo);
+            }
+
+            // Delete the doctor's schedules
+            DB::table('schedules')->where('doctor_id', $doctor->doctor_id)->delete();
+
+            // Delete the doctor
+            $doctor->delete();
+
+            // Commit the transaction
+            DB::commit();
+
+            // Get the last maximum ID value
+            $maxId = Doctor::max('id');
+
+            // Reset the auto-increment value to the last maximum ID value
+            DB::statement('ALTER TABLE doctors AUTO_INCREMENT = ' . ($maxId + 1));
+
+            return redirect()->route('doctors.index')->with('success', 'Doctor deleted successfully');
+        } catch (\Exception $e) {
+            // If an error occurs, rollback the transaction
+            DB::rollback();
+            return redirect()->route('doctors.index')->with('error', 'Failed to delete the doctor and associated schedules.');
         }
-
-        // Check if the photo is a URL
-        if (!filter_var($doctor->photo, FILTER_VALIDATE_URL)) {
-            // Delete the photo from storage
-            Storage::delete('public/images/' . $doctor->photo);
-        }
-
-        // Delete the doctor
-        $doctor->delete();
-
-        // Get the last maximum ID value
-        $maxId = Doctor::max('id');
-
-        // Reset the auto-increment value to the last maximum ID value
-        DB::statement('ALTER TABLE doctors AUTO_INCREMENT = ' . ($maxId + 1));
-
-        return redirect()->route('doctors.index')->with('success', 'Doctor deleted successfully');
     }
+
 
 
     //index polyclinic
