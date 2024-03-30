@@ -33,7 +33,8 @@
                                 class="fa fa-user-md"></i><span>Doctors</span></a>
                     </li>
                     <li class=''>
-                        <a class="nav-link" href="#"><i class="fa fa-calendar"></i><span>Schedule</span></a>
+                        <a class="nav-link" href="{{ route('schedules.index') }}"><i
+                                class="fa fa-calendar"></i><span>Schedule</span></a>
                     </li>
                 </ul>
                 {{-- <li class='{{ Request::is('users') ? 'active' : '' }}'>

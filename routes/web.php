@@ -3,6 +3,7 @@
 use App\Http\Controllers\DoctorController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ScheduleController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -48,5 +49,17 @@ Route::middleware(['auth'])->group(function () {
         'update' => 'doctors.update',
         'destroy' => 'doctors.destroy',
         'indexPolyclinic' => 'doctors.indexPolyclinic',
+    ]);
+
+    Route::resource('schedules', ScheduleController::class)->parameters([
+        'schedules' => 'schedule_id',
+    ])->names([
+        'index' => 'schedules.index',
+        'create' => 'schedules.create',
+        'store' => 'schedules.store',
+        'show' => 'schedules.show',
+        'edit' => 'schedules.edit',
+        'update' => 'schedules.update',
+        'destroy' => 'schedules.destroy',
     ]);
 });
